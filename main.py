@@ -24,6 +24,8 @@ fall_timer = 0
 fall_speed = 30
 
 score = 0
+total_lines = 0     # <--- Add this
+level = 1           # <--- Add this
 
 running = True
 game_over = False
@@ -86,17 +88,27 @@ while running:
                 # We send the dirty board to utils, and get back a clean one + the score
                 game_board, lines_cleared = clear_rows(game_board)
                 
-                match lines_cleared:
-                    case 1:
-                        score += 100
-                    case 2:
-                        score += 300
-                    case 3:
-                        score += 500
-                    case 4:
-                        score += 1200  # The big reward!
-                    case _:
-                        score += 0     # Default (0 lines cleared)
+                # --- UPDATE SCORE & LEVEL ---
+                if lines_cleared > 0:
+                    total_lines += lines_cleared
+                    
+                    # Calculate Level (Level up every 10 lines)
+                    level = (total_lines // 10) + 1
+                    
+                    # Cap level at 5 (so it doesn't crash if you go higher)
+                    if level > 5:
+                        level = 5
+                    
+                    # Convert ms to frames (60 FPS = ~16ms per frame)
+                    # Example: 500ms / 16 = 31 frames
+                    fall_speed = LEVEL_SPEEDS[level] // 16 
+                    
+                    # Score calculation
+                    match lines_cleared:
+                        case 1: score += 100
+                        case 2: score += 300
+                        case 3: score += 500
+                        case 4: score += 1200
                 
                 # SPAWN NEW PIECE
                 # 1. Promote Next to Current
@@ -164,14 +176,20 @@ while running:
     screen.blit(score_label, (GAME_WIDTH + 20, 20))
     screen.blit(score_value, (GAME_WIDTH + 20, 50))
 
+    # 1.2 Level
+    level_label = font.render("LEVEL", True, WHITE)
+    level_value = font.render(str(level), True, WHITE)
+    screen.blit(level_label, (GAME_WIDTH + 20, 80)) # Slightly below score
+    screen.blit(level_value, (GAME_WIDTH + 20, 105))
+
     # 2. Next Piece Label
     next_label = font.render("NEXT", True, WHITE)
-    screen.blit(next_label, (GAME_WIDTH + 20, 100))
+    screen.blit(next_label, (GAME_WIDTH + 20, 135))
 
     # 3. Draw the "Next Piece" preview
     # We draw it at a fixed offset in the sidebar (e.g., x=GAME_WIDTH + 50, y=150)
     preview_x = GAME_WIDTH + 70
-    preview_y = 200
+    preview_y = 225
     
     # Example for drawing the NEXT piece with borders
     for block in next_shape:

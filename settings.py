@@ -46,3 +46,14 @@ SHAPE_COLORS = {
     'I': CYAN,
     'O': YELLOW
 }
+
+# settings.py
+
+# Key = Level, Value = Milliseconds (lower is faster)
+LEVEL_SPEEDS = {
+    1: 500,  # 0.5 seconds (Start)
+    2: 400,
+    3: 300,
+    4: 200,
+    5: 150,  # Super fast!
+}
