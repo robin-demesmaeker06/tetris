@@ -53,8 +53,13 @@ fall_timer = 0
 fall_speed = 30
 
 score = 0
-total_lines = 0     # <--- Add this
-level = 1           # <--- Add this
+total_lines = 0
+level = 1
+
+held_key = None      # The letter ('T', 'I', etc.)
+held_shape = None    # The list of coordinates
+held_color = None    # The color
+can_hold = True      # Becomes False after you swap, resets when you lock a piece
 
 running = True
 game_over = False
@@ -100,6 +105,37 @@ while running:
                     # 2. Force the timer to trigger the lock immediately
                     fall_timer = fall_speed
                     drop_sfx.play()
+                if event.key == pygame.K_c:
+                    if can_hold:
+                        # Play a sound if you have one (e.g., rotate_sfx)
+                        rotate_sfx.play() 
+
+                        if held_key is None:
+                            # CASE 1: First time holding (Slot is empty)
+                            # 1. Save current into Hold (resetting rotation)
+                            held_key = current_key
+                            held_color = current_color
+                            held_shape = SHAPES[held_key] # Reset to default shape
+                            
+                            # 2. Spawn new piece from Next
+                            current_key, current_shape, current_color = next_key, next_shape, next_color
+                            next_key, next_shape, next_color = get_random_piece()
+                            
+                        else:
+                            # CASE 2: Swapping (Slot has a piece)
+                            # 1. Swap the Keys and Colors
+                            current_key, held_key = held_key, current_key
+                            current_color, held_color = held_color, current_color
+                            
+                            # 2. Reset both shapes to default rotation
+                            current_shape = SHAPES[current_key]
+                            held_shape = SHAPES[held_key]
+
+                        # RESET POSITION & LOCK
+                        grid_x = 5
+                        grid_y = 0
+                        fall_timer = 0
+                        can_hold = False  # Lock the hold until piece is placed
 
     # 2. UPDATE
     if not game_over:
@@ -116,6 +152,8 @@ while running:
                     if 0 <= y < ROWS and 0 <= x < COLS:
                         game_board[y][x] = current_color
                 
+                can_hold = True
+
                 # We send the dirty board to utils, and get back a clean one + the score
                 game_board, lines_cleared = clear_rows(game_board)
                 
@@ -239,7 +277,30 @@ while running:
         pygame.draw.rect(screen, next_color, (px, py, CELL_SIZE, CELL_SIZE))
         
         # 2. Draw a Black Border (width = 1 or 2)
-        pygame.draw.rect(screen, BLACK, (px, py, CELL_SIZE, CELL_SIZE), 1) # <--- NEW
+        pygame.draw.rect(screen, BLACK, (px, py, CELL_SIZE, CELL_SIZE), 1)
+
+        # --- DRAW HOLD PIECE ---
+    hold_label = font.render("HOLD", True, WHITE)
+    screen.blit(hold_label, (GAME_WIDTH + 20, 320)) # Draw label lower down
+
+    # Only draw if we actually have a piece held
+    if held_shape:
+        preview_x = GAME_WIDTH + 70
+        preview_y = 400 # Position it below the label
+        
+        for block in held_shape:
+            px = preview_x + (block[0] * CELL_SIZE)
+            py = preview_y + (block[1] * CELL_SIZE)
+            
+            # Draw block
+            pygame.draw.rect(screen, held_color, (px, py, CELL_SIZE, CELL_SIZE))
+            # Draw border
+            pygame.draw.rect(screen, BLACK, (px, py, CELL_SIZE, CELL_SIZE), 1)
+            
+    # Draw a visual indicator if hold is locked (Optional)
+    if not can_hold:
+        # Draw a small "X" or change the text color to Grey to show it's disabled
+        pass
 
     # (Add your Game Over overlay here)
 
