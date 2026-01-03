@@ -64,24 +64,24 @@ pip install -r requirements.txt
 
 You can compile the game into a standalone executable using pyinstaller (included in requirements).
 
-    Generate the build:
+Generate the build:
 ```bash
 
-    pyinstaller --noconfirm --onedir --windowed --name "Tetris" main.py
+pyinstaller --noconfirm --onedir --windowed --name "Tetris" main.py
 ```
-    Copy Assets:
+Copy Assets:
 
-        Locate the new dist/Tetris/ folder.
+Locate the new dist/Tetris/ folder.
 
-        Important: You must manually copy the assets folder into dist/Tetris/ so the executable can find the sound files.
+Important: You must manually copy the assets folder into dist/Tetris/ so the executable can find the sound files.
 
-    Run:
+Run:
 
-        Linux: 
+Linux: 
 ```bash
         ./dist/Tetris/Tetris
 ```
-        Windows: Open dist\Tetris\Tetris.exe
+Windows: Open dist\Tetris\Tetris.exe
 
 🕹️ Controls
 Key	Action
@@ -93,11 +93,11 @@ C	Hold / Swap Piece
 Esc	Pause / Quit Game
 📂 Project Structure
 
-    main.py: The entry point. Handles the game loop, input, rendering, and audio.
+- main.py: The entry point. Handles the game loop, input, rendering, and audio.
 
-    settings.py: Configuration for screen dimensions, colors, shapes (SHAPES), and speed settings (LEVEL_SPEEDS).
+- settings.py: Configuration for screen dimensions, colors, shapes (SHAPES), and speed settings (LEVEL_SPEEDS).
 
-    utils.py: Logic for collisions (check_collision), rotation (rotate_shape), and row clearing (clear_rows).
+- utils.py: Logic for collisions (check_collision), rotation (rotate_shape), and row clearing (clear_rows).
 
 📜 License
 
