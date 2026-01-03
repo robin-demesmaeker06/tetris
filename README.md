@@ -65,10 +65,10 @@ pip install -r requirements.txt
 You can compile the game into a standalone executable using pyinstaller (included in requirements).
 
     Generate the build:
-    ```bash
+```bash
 
     pyinstaller --noconfirm --onedir --windowed --name "Tetris" main.py
-    ```
+```
     Copy Assets:
 
         Locate the new dist/Tetris/ folder.
@@ -77,9 +77,10 @@ You can compile the game into a standalone executable using pyinstaller (include
 
     Run:
 
-        Linux: ```bash
+        Linux: 
+```bash
         ./dist/Tetris/Tetris
-        ```
+```
         Windows: Open dist\Tetris\Tetris.exe
 
 🕹️ Controls
