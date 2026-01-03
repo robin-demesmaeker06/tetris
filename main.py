@@ -5,7 +5,36 @@ import random
 from settings import *
 from utils import *
 
+# main.py
+
 pygame.init()
+pygame.mixer.init()  # <--- Initialize the sound system
+
+# --- LOAD SOUNDS ---
+try:
+    # 1. Background Music (Streamed)
+    pygame.mixer.music.load('assets/sounds/music.mp3')
+    pygame.mixer.music.set_volume(0.3)  # 30% volume so it's not too loud
+    pygame.mixer.music.play(-1)         # Play infinitely (-1 loop)
+
+    # 2. Sound Effects
+    rotate_sfx = pygame.mixer.Sound('assets/sounds/rotate.wav')
+    clear_sfx = pygame.mixer.Sound('assets/sounds/clear.wav')
+    drop_sfx = pygame.mixer.Sound('assets/sounds/drop.wav')
+    levelup_sfx = pygame.mixer.Sound('assets/sounds/levelup.wav')
+
+    # Adjust volumes if needed
+    rotate_sfx.set_volume(0.5)
+    clear_sfx.set_volume(0.5)
+    drop_sfx.set_volume(0.8) # Keep the explosion loud!
+
+except Exception as e:
+    print(f"Warning: Sound failed to load. {e}")
+    # Dummy class to prevent crashing if files are missing
+    class DummySound:
+        def play(self): pass
+    rotate_sfx = clear_sfx = drop_sfx = DummySound()
+
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tetris")
 clock = pygame.time.Clock()
@@ -61,6 +90,7 @@ while running:
                     rotated = rotate_shape(current_shape, current_key)
                     if not check_collision(game_board, rotated, grid_x, grid_y):
                         current_shape = rotated
+                        rotate_sfx.play()
                         # SPACE: Hard Drop (Instant fall)
                 if event.key == pygame.K_SPACE:
                     # 1. Move down until we hit something
@@ -69,6 +99,7 @@ while running:
                     
                     # 2. Force the timer to trigger the lock immediately
                     fall_timer = fall_speed
+                    drop_sfx.play()
 
     # 2. UPDATE
     if not game_over:
@@ -90,18 +121,25 @@ while running:
                 
                 # --- UPDATE SCORE & LEVEL ---
                 if lines_cleared > 0:
+                    clear_sfx.play()  # Play the normal clear sound
+                    
+                    # 1. Remember the OLD level before updating
+                    old_level = level
+                    
+                    # 2. Update totals
                     total_lines += lines_cleared
                     
-                    # Calculate Level (Level up every 10 lines)
+                    # 3. Calculate NEW level
                     level = (total_lines // 10) + 1
+                    if level > 5: level = 5
                     
-                    # Cap level at 5 (so it doesn't crash if you go higher)
-                    if level > 5:
-                        level = 5
+                    # 4. Check for Level Up
+                    if level > old_level:
+                        levelup_sfx.play() # <--- PLAY THE NEW SOUND
+                        print(f"Level Up! Now at Level {level}")
                     
-                    # Convert ms to frames (60 FPS = ~16ms per frame)
-                    # Example: 500ms / 16 = 31 frames
-                    fall_speed = LEVEL_SPEEDS[level] // 16 
+                    # Update speed
+                    fall_speed = LEVEL_SPEEDS[level] // 16
                     
                     # Score calculation
                     match lines_cleared:
@@ -125,6 +163,7 @@ while running:
                 if check_collision(game_board, current_shape, grid_x, grid_y):
                     print("GAME OVER!")
                     game_over = True
+                    pygame.mixer.music.stop()
 
     # 3. RENDER
     screen.fill(BLACK) # Clear screen
