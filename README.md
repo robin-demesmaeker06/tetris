@@ -26,6 +26,7 @@ It is recommended to use a **virtual environment** to manage dependencies. This 
 git clone [https://github.com/robin-demesmaeker06/tetris.git](https://github.com/robin-demesmaeker06/tetris.git)
 cd tetris
 
+```
 2. Setup Audio Directory
 
 The game expects audio files to be in a specific folder structure. Ensure your assets folder is set up correctly:
@@ -43,31 +44,31 @@ tetris/
 3. Create and activate a virtual environment
 
 Linux / macOS:
-Bash
+```bash
 
 python3 -m venv venv
 source venv/bin/activate
-
+```
 Windows:
-PowerShell
+```powerShell
 
 python -m venv venv
 venv\Scripts\activate
-
+```
 4. Install dependencies
-Bash
+```bash
 
 pip install -r requirements.txt
-
+```
 📦 Building the Executable
 
 You can compile the game into a standalone executable using pyinstaller (included in requirements).
 
     Generate the build:
-    Bash
+    ```bash
 
     pyinstaller --noconfirm --onedir --windowed --name "Tetris" main.py
-
+    ```
     Copy Assets:
 
         Locate the new dist/Tetris/ folder.
@@ -76,8 +77,9 @@ You can compile the game into a standalone executable using pyinstaller (include
 
     Run:
 
-        Linux: ./dist/Tetris/Tetris
-
+        Linux: ```bash
+        ./dist/Tetris/Tetris
+        ```
         Windows: Open dist\Tetris\Tetris.exe
 
 🕹️ Controls

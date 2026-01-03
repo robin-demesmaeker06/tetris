@@ -297,7 +297,7 @@ while running:
             # Draw border
             pygame.draw.rect(screen, BLACK, (px, py, CELL_SIZE, CELL_SIZE), 1)
             
-    # Draw a visual indicator if hold is locked (Optional)
+    # Draw a visual indicator if hold is locked
     if not can_hold:
         # Draw a small "X" or change the text color to Grey to show it's disabled
         pass
