@@ -21,9 +21,8 @@ A basic implementation of the classic retro arcade game **Tetris**, built using 
     ```
 
 2.  **Install dependencies:**
-    If you haven't installed `pygame` yet, run:
     ```bash
-    pip install pygame
+    pip install -r requirements.txt
     ```
 
 3.  **Start the game:**
